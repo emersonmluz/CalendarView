@@ -11,6 +11,7 @@ protocol CalendarViewDelegate {
     func savedDates(transfer dates: [Date])
 }
 
+//MARK: - CalendarView
 final class CalendarView: UIView {
     private let contentVStack: UIStackView = {
         let stackView = UIStackView()
@@ -136,19 +137,30 @@ final class CalendarView: UIView {
         clipsToBounds = true
     }
     
+    //MARK: - Month Navigation Button
     private func setupMonthNavigationButtons() {
         backMonthButton.addTarget(self, action: #selector(monthNavigationAction), for: .touchUpInside)
         nextMonthButton.addTarget(self, action: #selector(monthNavigationAction), for: .touchUpInside)
     }
     
+    //MARK: - Days of Week
     private func setupDaysOfWeekHStack() {
-        let daysOfWeek = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
+        let daysOfWeek: [DaysOfWeek] = [
+            .monday,
+            .tuesday,
+            .wednesday,
+            .thursday,
+            .friday,
+            .saturday,
+            .sunday
+        ]
+        
         for day in daysOfWeek {
             let label = UILabel()
             label.translatesAutoresizingMaskIntoConstraints = false
-            label.text = day
+            label.text = day.rawValue
             label.font = .systemFont(ofSize: 14, weight: .bold)
-            if day == "Dom" {
+            if day == .sunday {
                 label.textColor = .systemRed
             } else {
                 label.textColor = .systemGray
@@ -165,7 +177,6 @@ final class CalendarView: UIView {
         addSubview(contentVStack)
         setupHeaderHierarchy()
         contentVStack.addArrangedSubview(daysOfWeekHStack)
-        contentVStack.setCustomSpacing(0, after: daysOfWeekHStack)
         contentVStack.addArrangedSubview(daysVStack)
         addSubview(lineView)
     }
@@ -177,7 +188,6 @@ final class CalendarView: UIView {
         headerView.addSubview(monthYearLabel)
         headerView.addSubview(backMonthButton)
         headerView.addSubview(nextMonthButton)
-        contentVStack.setCustomSpacing(0, after: headerHStack)
     }
     
     //MARK: - Constraints
@@ -203,7 +213,7 @@ final class CalendarView: UIView {
         ])
     }
     
-    //MARK: - Update
+    //MARK: - Update Calendar
     private func updateCalendar(nextMonth: Bool, isBrowsing: Bool) {
         daysVStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         buttonTag = 1000
@@ -219,97 +229,31 @@ final class CalendarView: UIView {
                 guard let currentStackView else { return }
                 daysVStack.addArrangedSubview(currentStackView)
             }
-            
             if day == 1 {
                 for index in 0..<daysPreviousMonth {
                     if let dayPrevious = createAlternativeDays(previousToCurrent: true, adjustDayWithIndex: (daysPreviousMonth - 1) - index) {
-                        let container = createContainerView(to: dayPrevious)
-                        currentStackView?.addArrangedSubview(container)
+                        let containerButton = createContainerView(to: dayPrevious)
+                        currentStackView?.addArrangedSubview(containerButton)
                     }
                 }
             }
-            
             let button = createDayButton(day: day)
-            let container = createContainerView(to: button)
-            currentStackView?.addArrangedSubview(container)
+            let containerButton = createContainerView(to: button)
+            currentStackView?.addArrangedSubview(containerButton)
         }
         
         let remainingSpaces = 7 - (currentStackView?.arrangedSubviews.count ?? 0)
         for index in 0..<remainingSpaces {
             if let dayFuture = createAlternativeDays(previousToCurrent: false, adjustDayWithIndex: index) {
-                let container = createContainerView(to: dayFuture)
-                currentStackView?.addArrangedSubview(container)
+                let containerButton = createContainerView(to: dayFuture)
+                currentStackView?.addArrangedSubview(containerButton)
             }
         }
         
         updateSelection(nextMonth: nextMonth, isBrowsing: isBrowsing)
     }
     
-    //MARK: - Create
-    private func createDayButton(day: Int) -> UIButton {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(String(day), for: .normal)
-        let customBlack = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1)
-        button.setTitleColor(customBlack, for: .normal)
-        button.titleLabel?.textColor = customBlack
-        button.titleLabel?.font = .systemFont(ofSize: 16)
-        button.titleLabel?.textAlignment = .center
-        button.tag = buttonTag
-        buttonTag += 1
-        button.frame = CGRect(x: 50, y: 50, width: 50, height: 50)
-        button.layer.cornerRadius = 15
-        button.clipsToBounds = true
-        button.addTarget(self, action: #selector(dayButtonTapped(_:)), for: .touchUpInside)
-        return button
-    }
-    
-    private func createDaysHStack() -> UIStackView {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .fill
-        stackView.spacing = 0
-        stackView.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        return stackView
-    }
-    
-    private func createAlternativeDays(previousToCurrent: Bool, adjustDayWithIndex: Int) -> UIButton? {
-        guard let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: calendarMonth),
-              let monthInterval = Calendar.current.range(of: .day, in: .month, for: previousMonth) else {
-            return nil }
-        let adjustBound = 1
-        let adjustDaysOfTheMonth = adjustDayWithIndex + adjustBound
-        let dayPreviousMonth = previousToCurrent
-        ? monthInterval.upperBound - adjustDaysOfTheMonth
-        : monthInterval.lowerBound + adjustDaysOfTheMonth - adjustBound
-        
-        let button = createDayButton(day: dayPreviousMonth)
-        let customGrey = UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
-        button.setTitleColor(customGrey, for: .normal)
-        return button
-    }
-    
-    private func createContainerView(to component: UIView) -> UIView {
-        let containerView = UIView()
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(component)
-        component.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
-        component.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        return containerView
-    }
-    
-    private func createShapeMask(bounds: CGRect, cornerTop: UIRectCorner, cornerBotton: UIRectCorner) -> CAShapeLayer {
-        let maskPath = UIBezierPath(roundedRect: bounds,
-                                    byRoundingCorners: [cornerTop, cornerBotton],
-                                    cornerRadii: CGSize(width: 15, height: 15))
-        
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = maskPath.cgPath
-        return maskLayer
-    }
-    
-    //MARK: - Actions
+    //MARK: - Actions Day Tapped
     @objc func dayButtonTapped(_ sender: UIButton) {
         guard numberOfDays > 1 else { return }
         guard validateSelection(sender) else { return }
@@ -321,19 +265,19 @@ final class CalendarView: UIView {
         sender.setTitleColor(.white, for: .normal)
         
         DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            
+            guard let self, let titleLabel = sender.titleLabel, let day = titleLabel.text else { return }
             let adjustMonth: Int = 0
-            let day: String = String(Int(sender.titleLabel?.text ?? "1") ?? 1)
-            
             saveSelection(dayInit: day, adjustMonth: adjustMonth)
             updateCalendar(nextMonth: false, isBrowsing: false)
         }
     }
     
-    //MARK: - Navigation
+    //MARK: - Action Navigation
     @objc func monthNavigationAction(_ sender: UIButton) {
-        let valueToCalcMonth = sender === backMonthButton ? -1 : 1
+        let previousMonth = -1
+        let nextMonth = 1
+        let valueToCalcMonth = sender === backMonthButton ? previousMonth : nextMonth
+        
         calendarMonth = Calendar.current.date(byAdding: .month, value: valueToCalcMonth, to: calendarMonth) ?? Date()
         
         let lastMonth = Calendar.current.component(.month, from: savedDates.last ?? Date())
@@ -350,7 +294,7 @@ final class CalendarView: UIView {
         }
     }
     
-    //MARK: - Functions
+    //MARK: - Func Save Selection
     private func saveSelection(dayInit: String, adjustMonth: Int = 0) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -373,6 +317,7 @@ final class CalendarView: UIView {
         }
     }
     
+    //MARK: - Func Save Dates
     private func saveDateSelection(dateInit: Date, daysOfNumber: Int) {
         var dates = [Date]()
         let calendar = Calendar.current
@@ -385,6 +330,7 @@ final class CalendarView: UIView {
         delegate?.savedDates(transfer: savedDates)
     }
     
+    //MARK: - Func Update Selection
     private func updateSelection(nextMonth: Bool, isBrowsing: Bool) {
         guard !savedDates.isEmpty, let firstDate = savedDates.first, let lastDate = savedDates.last else { return }
         
@@ -467,6 +413,7 @@ final class CalendarView: UIView {
         }
     }
     
+    //MARK: - Func Fill Future Days
     private func fillFutureDays(_ days: Int) {
         guard let horizontalStack = daysVStack.arrangedSubviews.last, days > 0, let firstDate = savedDates.first, let lastDate = savedDates.last else { return }
         let firstDay = Calendar.current.component(.day, from: firstDate)
@@ -514,6 +461,7 @@ final class CalendarView: UIView {
         }
     }
     
+    //MARK: - Func Fill Remaining Days
     private func fillRemainingDays(nextMonth: Bool, daysRemaining: Int) {
         guard let horizontalStack = daysVStack.arrangedSubviews.first, nextMonth else { return }
         let (intervalColor, selectionColor) = selectionColor()
@@ -547,7 +495,8 @@ final class CalendarView: UIView {
         }
     }
     
-    func existSelection(_ day: String?) -> Bool {
+    //MARK: - Func Exist Selection
+    private func existSelection(_ day: String?) -> Bool {
         let secondaryColor = UIColor.systemRed
         for horizontalStack in daysVStack.arrangedSubviews {
             for container in horizontalStack.subviews {
@@ -564,12 +513,14 @@ final class CalendarView: UIView {
         return false
     }
     
+    //MARK: - Func Number of Days
     private func numberOfDaysInMonth(date: Date) -> Int {
         let calendar = Calendar.current
         let range = calendar.range(of: .day, in: .month, for: date)
         return range?.count ?? 0
     }
     
+    //MARK: - Func Get Previous Day
     private func getPreviousDays(date: Date) -> Int {
         let calendar = Calendar.current
         guard let firstDayOfCurrentMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
@@ -584,6 +535,7 @@ final class CalendarView: UIView {
         return previousSpace
     }
     
+    //MARK: - Func Format Month
     private func getFormatMonth(date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "pt_BR")
@@ -592,6 +544,7 @@ final class CalendarView: UIView {
         return month.prefix(1).capitalized + month.suffix(month.count - 1)
     }
     
+    //MARK: - Func Convert To Date
     private func formatStringToDate(with date: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "pt_BR")
@@ -600,11 +553,13 @@ final class CalendarView: UIView {
         return dateFormat ?? Date()
     }
     
+    //MARK: - Func Selection Color
     private func selectionColor() -> (UIColor, UIColor) {
         let intervalColor = UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1)
         return (intervalColor, .systemRed)
     }
     
+    //MARK: - Func Validate Selection
     private func validateSelection(_ sender: UIButton) -> Bool {
         guard let day = Int(sender.currentTitle ?? "") else {
             return false
@@ -619,16 +574,19 @@ final class CalendarView: UIView {
         return true
     }
     
+    //MARK: - Func Shape Left
     private func shapeLeft(_ view: UIView) -> CAShapeLayer {
         let maskLayer = createShapeMask(bounds: view.bounds, cornerTop: .topLeft, cornerBotton: .bottomLeft)
         return maskLayer
     }
     
+    //MARK: - Func Shape Right
     private func shapeRight(_ view: UIView) -> CAShapeLayer {
         let maskLayer = createShapeMask(bounds: view.bounds, cornerTop: .topRight, cornerBotton: .bottomRight)
         return maskLayer
     }
     
+    //MARK: - Func Clear Shape
     private func clearShape(bounds: CGRect) -> CAShapeLayer {
         let maskPath = UIBezierPath(roundedRect: bounds,
                                     byRoundingCorners: [.topRight, .topLeft, .bottomLeft, .bottomRight],
@@ -671,5 +629,84 @@ final class CalendarView: UIView {
         }
         savedDates = []
         updateCalendar(nextMonth: false, isBrowsing: false)
+    }
+    
+    //MARK: - Create Day Button
+    private func createDayButton(day: Int) -> UIButton {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(String(day), for: .normal)
+        let customBlack = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1)
+        button.setTitleColor(customBlack, for: .normal)
+        button.titleLabel?.textColor = customBlack
+        button.titleLabel?.font = .systemFont(ofSize: 16)
+        button.titleLabel?.textAlignment = .center
+        button.tag = buttonTag
+        buttonTag += 1
+        button.frame = CGRect(x: 50, y: 50, width: 50, height: 50)
+        button.layer.cornerRadius = 15
+        button.clipsToBounds = true
+        button.addTarget(self, action: #selector(dayButtonTapped(_:)), for: .touchUpInside)
+        return button
+    }
+    
+    //MARK: - Create Days Stack
+    private func createDaysHStack() -> UIStackView {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .fill
+        stackView.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        return stackView
+    }
+    
+    //MARK: - Create Alternative Days
+    private func createAlternativeDays(previousToCurrent: Bool, adjustDayWithIndex: Int) -> UIButton? {
+        guard let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: calendarMonth),
+              let monthInterval = Calendar.current.range(of: .day, in: .month, for: previousMonth)
+        else {
+            return nil
+        }
+        
+        let adjustBound = 1
+        let adjustDaysOfTheMonth = adjustDayWithIndex + adjustBound
+        let dayPreviousMonth = previousToCurrent
+            ? monthInterval.upperBound - adjustDaysOfTheMonth
+            : monthInterval.lowerBound + adjustDaysOfTheMonth - adjustBound
+        let button = createDayButton(day: dayPreviousMonth)
+        let customGrey = UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
+        button.setTitleColor(customGrey, for: .normal)
+        return button
+    }
+    
+    //MARK: - Create ContainerView
+    private func createContainerView(to component: UIView) -> UIView {
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(component)
+        component.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+        component.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        return containerView
+    }
+    
+    private func createShapeMask(bounds: CGRect, cornerTop: UIRectCorner, cornerBotton: UIRectCorner) -> CAShapeLayer {
+        let maskPath = UIBezierPath(roundedRect: bounds,
+                                    byRoundingCorners: [cornerTop, cornerBotton],
+                                    cornerRadii: CGSize(width: 15, height: 15))
+        
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = maskPath.cgPath
+        return maskLayer
+    }
+    
+    //MARK: - Enum
+    enum DaysOfWeek: String {
+        case sunday = "Dom"
+        case monday = "Seg"
+        case tuesday = "Ter"
+        case wednesday = "Qua"
+        case thursday = "Qui"
+        case friday = "Sex"
+        case saturday = "Sáb"
     }
 }
