@@ -298,7 +298,14 @@ final class CalendarView: UIView {
     private func saveSelection(dayInit: String, adjustMonth: Int = 0) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        
+        let date = formatDateToSave(dayInit: dayInit, adjustMonth: adjustMonth)
+        if let dateInit = dateFormatter.date(from: date) {
+            saveDates(dateInit: dateInit, daysOfNumber: numberOfDays)
+        }
+    }
+    
+    //MARK: - Func Format Date To Save
+    private func formatDateToSave(dayInit: String, adjustMonth: Int = 0) -> String {
         var month = Calendar.current.component(.month, from: calendarMonth)
         var year = Calendar.current.component(.year, from: calendarMonth)
         month += adjustMonth
@@ -311,14 +318,11 @@ final class CalendarView: UIView {
             year += 1
         }
         
-        let date = "\(year)-\(month)-\(dayInit)"
-        if let date = dateFormatter.date(from: date) {
-            saveDateSelection(dateInit: date, daysOfNumber: numberOfDays)
-        }
+        return "\(year)-\(month)-\(dayInit)"
     }
     
     //MARK: - Func Save Dates
-    private func saveDateSelection(dateInit: Date, daysOfNumber: Int) {
+    private func saveDates(dateInit: Date, daysOfNumber: Int) {
         var dates = [Date]()
         let calendar = Calendar.current
         for day in 0..<daysOfNumber {
@@ -416,6 +420,7 @@ final class CalendarView: UIView {
     //MARK: - Func Fill Future Days
     private func fillFutureDays(_ days: Int) {
         guard let horizontalStack = daysVStack.arrangedSubviews.last, days > 0, let firstDate = savedDates.first, let lastDate = savedDates.last else { return }
+        
         let firstDay = Calendar.current.component(.day, from: firstDate)
         let lastDay = Calendar.current.component(.day, from: lastDate)
         let firstMonth = Calendar.current.component(.month, from: firstDate)
@@ -424,6 +429,7 @@ final class CalendarView: UIView {
         let (intervalColor, selectionColor) = selectionColor()
         let customGrey = UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
         var futureDays = days
+        
         for container in horizontalStack.subviews {
             if let button = container.subviews.first as? UIButton {
                 let day: Int = Int(button.titleLabel?.text ?? "0") ?? 0
@@ -596,41 +602,6 @@ final class CalendarView: UIView {
         return maskLayer
     }
     
-    //MARK: - Methods
-    func calendarMonthInit(nowPlus: Int) {
-        let date = Date()
-        calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
-        updateCalendar(nextMonth: false, isBrowsing: false)
-    }
-    
-    func updateNumberOfDays(_ value: Int) {
-        numberOfDays = value
-        savedDates = []
-        updateCalendar(nextMonth: false, isBrowsing: false)
-    }
-    
-    func enabledCalendar(_ isEnabled: Bool) {
-        if isEnabled {
-            self.alpha = 1
-            self.isUserInteractionEnabled = true
-        } else {
-            self.alpha = 0.5
-            self.isUserInteractionEnabled = false
-        }
-    }
-    
-    func clearSelection() {
-        for horizontalStack in daysVStack.arrangedSubviews {
-            for container in horizontalStack.subviews {
-                container.backgroundColor = .clear
-                container.subviews.first?.backgroundColor = .clear
-                container.layer.mask = clearShape(bounds: container.bounds)
-            }
-        }
-        savedDates = []
-        updateCalendar(nextMonth: false, isBrowsing: false)
-    }
-    
     //MARK: - Create Day Button
     private func createDayButton(day: Int) -> UIButton {
         let button = UIButton(type: .system)
@@ -697,6 +668,41 @@ final class CalendarView: UIView {
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
         return maskLayer
+    }
+    
+    //MARK: - Methods
+    func calendarMonthInit(nowPlus: Int) {
+        let date = Date()
+        calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
+        updateCalendar(nextMonth: false, isBrowsing: false)
+    }
+    
+    func numberOfDaysToSelec(_ value: Int) {
+        numberOfDays = value
+        savedDates = []
+        updateCalendar(nextMonth: false, isBrowsing: false)
+    }
+    
+    func enabledCalendar(_ isEnabled: Bool) {
+        if isEnabled {
+            self.alpha = 1
+            self.isUserInteractionEnabled = true
+        } else {
+            self.alpha = 0.5
+            self.isUserInteractionEnabled = false
+        }
+    }
+    
+    func clearSelection() {
+        for horizontalStack in daysVStack.arrangedSubviews {
+            for container in horizontalStack.subviews {
+                container.backgroundColor = .clear
+                container.subviews.first?.backgroundColor = .clear
+                container.layer.mask = clearShape(bounds: container.bounds)
+            }
+        }
+        savedDates = []
+        updateCalendar(nextMonth: false, isBrowsing: false)
     }
     
     //MARK: - Enum
