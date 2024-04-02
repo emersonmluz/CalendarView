@@ -12,12 +12,6 @@ protocol CalendarViewDelegate {
 }
 
 final class CalendarView: UIView {
-    private var calendarMonth: Date = {
-        let date = Date()
-        let month = Calendar.current.date(byAdding: .day, value: 0, to: date)
-        return month ?? Date()
-    }()
-    
     private let contentVStack: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -107,10 +101,12 @@ final class CalendarView: UIView {
         return stackView
     }()
     
+    //MARK: - Property
+    private var calendarMonth = Date()
+    private var savedDates: [Date] = []
+    private var numberOfDays: Int = 0
     private var dateNowPlusDays = -1
-    private var saveDate: [Date] = []
-    private var daysSelection: Int = 0
-    private var tagReference = 1000
+    private var buttonTag = 1000
     var delegate: CalendarViewDelegate?
     
     //MARK: - Init
@@ -210,7 +206,7 @@ final class CalendarView: UIView {
     //MARK: - Update
     private func updateCalendar(nextMonth: Bool, isBrowsing: Bool) {
         daysVStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        tagReference = 1000
+        buttonTag = 1000
         monthYearLabel.text = getFormatMonth(date: calendarMonth)
         
         var currentStackView: UIStackView?
@@ -259,8 +255,8 @@ final class CalendarView: UIView {
         button.titleLabel?.textColor = customBlack
         button.titleLabel?.font = .systemFont(ofSize: 16)
         button.titleLabel?.textAlignment = .center
-        button.tag = tagReference
-        tagReference += 1
+        button.tag = buttonTag
+        buttonTag += 1
         button.frame = CGRect(x: 50, y: 50, width: 50, height: 50)
         button.layer.cornerRadius = 15
         button.clipsToBounds = true
@@ -315,7 +311,7 @@ final class CalendarView: UIView {
     
     //MARK: - Actions
     @objc func dayButtonTapped(_ sender: UIButton) {
-        guard daysSelection > 1 else { return }
+        guard numberOfDays > 1 else { return }
         guard validateSelection(sender) else { return }
         clearSelection()
         
@@ -340,7 +336,7 @@ final class CalendarView: UIView {
         let valueToCalcMonth = sender === backMonthButton ? -1 : 1
         calendarMonth = Calendar.current.date(byAdding: .month, value: valueToCalcMonth, to: calendarMonth) ?? Date()
         
-        let lastMonth = Calendar.current.component(.month, from: saveDate.last ?? Date())
+        let lastMonth = Calendar.current.component(.month, from: savedDates.last ?? Date())
         let monthCalendar = Calendar.current.component(.month, from: calendarMonth)
         
         if sender === backMonthButton {
@@ -373,7 +369,7 @@ final class CalendarView: UIView {
         
         let date = "\(year)-\(month)-\(dayInit)"
         if let date = dateFormatter.date(from: date) {
-            saveDateSelection(dateInit: date, daysOfNumber: daysSelection)
+            saveDateSelection(dateInit: date, daysOfNumber: numberOfDays)
         }
     }
     
@@ -385,12 +381,12 @@ final class CalendarView: UIView {
                 dates.append(date)
             }
         }
-        saveDate = dates
-        delegate?.savedDates(transfer: saveDate)
+        savedDates = dates
+        delegate?.savedDates(transfer: savedDates)
     }
     
     private func updateSelection(nextMonth: Bool, isBrowsing: Bool) {
-        guard !saveDate.isEmpty, let firstDate = saveDate.first, let lastDate = saveDate.last else { return }
+        guard !savedDates.isEmpty, let firstDate = savedDates.first, let lastDate = savedDates.last else { return }
         
         let firstMonth = Calendar.current.component(.month, from: firstDate)
         let lastMonth = Calendar.current.component(.month, from: lastDate)
@@ -404,7 +400,7 @@ final class CalendarView: UIView {
         var daysRemaining = 0
         var daysFuture = 0
         
-        for date in saveDate {
+        for date in savedDates {
             let dayBase = Calendar.current.component(.day, from: date)
             let monthBase = Calendar.current.component(.month, from: date)
             let monthCalendar = Calendar.current.component(.month, from: calendarMonth)
@@ -420,8 +416,8 @@ final class CalendarView: UIView {
                         if dayCalendar == String(dayBase), monthCalendar == monthBase, button.currentTitleColor == customBlack {
                             
                             guard !existSelection(dayCalendar ?? "") else { return }
-                            let dateFirst = saveDate.first
-                            let dateLast = saveDate.last
+                            let dateFirst = savedDates.first
+                            let dateLast = savedDates.last
                             
                             DispatchQueue.main.async { [weak self] in
                                 guard let self else { return }
@@ -441,7 +437,7 @@ final class CalendarView: UIView {
                                         DispatchQueue.main.async { [weak self] in
                                             container.layer.mask = self?.shapeRight(container)
                                         }
-                                        daysRemaining = daysSelection - (Int(dayCalendar ?? "0") ?? 0)
+                                        daysRemaining = numberOfDays - (Int(dayCalendar ?? "0") ?? 0)
                                     }
                                 } else {
                                     if container == horizontalStack.subviews.first {
@@ -472,7 +468,7 @@ final class CalendarView: UIView {
     }
     
     private func fillFutureDays(_ days: Int) {
-        guard let horizontalStack = daysVStack.arrangedSubviews.last, days > 0, let firstDate = saveDate.first, let lastDate = saveDate.last else { return }
+        guard let horizontalStack = daysVStack.arrangedSubviews.last, days > 0, let firstDate = savedDates.first, let lastDate = savedDates.last else { return }
         let firstDay = Calendar.current.component(.day, from: firstDate)
         let lastDay = Calendar.current.component(.day, from: lastDate)
         let firstMonth = Calendar.current.component(.month, from: firstDate)
@@ -643,9 +639,15 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Methods
+    func calendarMonthInit(nowPlus: Int) {
+        let date = Date()
+        calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
+        updateCalendar(nextMonth: false, isBrowsing: false)
+    }
+    
     func updateNumberOfDays(_ value: Int) {
-        daysSelection = value
-        saveDate = []
+        numberOfDays = value
+        savedDates = []
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
     
@@ -667,7 +669,7 @@ final class CalendarView: UIView {
                 container.layer.mask = clearShape(bounds: container.bounds)
             }
         }
-        saveDate = []
+        savedDates = []
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
 }
