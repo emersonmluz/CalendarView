@@ -7,15 +7,8 @@
 
 import UIKit
 
-protocol CalendarViewProtocol {
-    func clearSelection()
-    func existSelection(_ day: String?) -> Bool
-}
-
 protocol CalendarViewDelegate {
-    func optionSelecioned()
-    func existDateInBoard(_: Date) -> Bool
-    func savedDateSelection(transfer: [Date])
+    func savedDates(transfer dates: [Date])
 }
 
 final class CalendarView: UIView {
@@ -24,7 +17,7 @@ final class CalendarView: UIView {
         let month = Calendar.current.date(byAdding: .day, value: 0, to: date)
         return month ?? Date()
     }()
-
+    
     private let contentVStack: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -85,7 +78,7 @@ final class CalendarView: UIView {
         button.widthAnchor.constraint(equalToConstant: 20).isActive = true
         return button
     }()
-
+    
     private let lineView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -104,7 +97,7 @@ final class CalendarView: UIView {
         stackView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         return stackView
     }()
-
+    
     private let daysVStack: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -119,7 +112,7 @@ final class CalendarView: UIView {
     private var daysSelection: Int = 0
     private var tagReference = 1000
     var delegate: CalendarViewDelegate?
-
+    
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -130,12 +123,12 @@ final class CalendarView: UIView {
         setupConstraints()
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
-
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     //MARK: - Setup
     private func setupViews() {
         translatesAutoresizingMaskIntoConstraints = false
@@ -213,7 +206,7 @@ final class CalendarView: UIView {
             lineView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-
+    
     //MARK: - Update
     private func updateCalendar(nextMonth: Bool, isBrowsing: Bool) {
         daysVStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -255,7 +248,7 @@ final class CalendarView: UIView {
         
         updateSelection(nextMonth: nextMonth, isBrowsing: isBrowsing)
     }
-
+    
     //MARK: - Create
     private func createDayButton(day: Int) -> UIButton {
         let button = UIButton(type: .system)
@@ -284,7 +277,7 @@ final class CalendarView: UIView {
         stackView.heightAnchor.constraint(equalToConstant: 32).isActive = true
         return stackView
     }
-
+    
     private func createAlternativeDays(previousToCurrent: Bool, adjustDayWithIndex: Int) -> UIButton? {
         guard let previousMonth = Calendar.current.date(byAdding: .month, value: -1, to: calendarMonth),
               let monthInterval = Calendar.current.range(of: .day, in: .month, for: previousMonth) else {
@@ -292,8 +285,8 @@ final class CalendarView: UIView {
         let adjustBound = 1
         let adjustDaysOfTheMonth = adjustDayWithIndex + adjustBound
         let dayPreviousMonth = previousToCurrent
-            ? monthInterval.upperBound - adjustDaysOfTheMonth
-            : monthInterval.lowerBound + adjustDaysOfTheMonth - adjustBound
+        ? monthInterval.upperBound - adjustDaysOfTheMonth
+        : monthInterval.lowerBound + adjustDaysOfTheMonth - adjustBound
         
         let button = createDayButton(day: dayPreviousMonth)
         let customGrey = UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
@@ -319,10 +312,10 @@ final class CalendarView: UIView {
         maskLayer.path = maskPath.cgPath
         return maskLayer
     }
-
+    
     //MARK: - Actions
     @objc func dayButtonTapped(_ sender: UIButton) {
-        //guard daysSelection > 1 else { return }
+        guard daysSelection > 1 else { return }
         guard validateSelection(sender) else { return }
         clearSelection()
         
@@ -339,7 +332,6 @@ final class CalendarView: UIView {
             
             saveSelection(dayInit: day, adjustMonth: adjustMonth)
             updateCalendar(nextMonth: false, isBrowsing: false)
-            delegate?.optionSelecioned()
         }
     }
     
@@ -361,7 +353,7 @@ final class CalendarView: UIView {
             updateCalendar(nextMonth: true, isBrowsing: true)
         }
     }
-
+    
     //MARK: - Functions
     private func saveSelection(dayInit: String, adjustMonth: Int = 0) {
         let dateFormatter = DateFormatter()
@@ -394,7 +386,7 @@ final class CalendarView: UIView {
             }
         }
         saveDate = dates
-        delegate?.savedDateSelection(transfer: saveDate)
+        delegate?.savedDates(transfer: saveDate)
     }
     
     private func updateSelection(nextMonth: Bool, isBrowsing: Bool) {
@@ -581,19 +573,19 @@ final class CalendarView: UIView {
         let range = calendar.range(of: .day, in: .month, for: date)
         return range?.count ?? 0
     }
-
+    
     private func getPreviousDays(date: Date) -> Int {
         let calendar = Calendar.current
-            guard let firstDayOfCurrentMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
-                  let lastDayOfPreviousMonth = calendar.date(byAdding: DateComponents(day: -1), to: firstDayOfCurrentMonth) else {
-                return 0
-            }
-            let weekday = calendar.component(.weekday, from: lastDayOfPreviousMonth)
-            var previousSpace = weekday - calendar.firstWeekday
-            if previousSpace < 0 {
-                previousSpace += 7
-            }
-            return previousSpace
+        guard let firstDayOfCurrentMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
+              let lastDayOfPreviousMonth = calendar.date(byAdding: DateComponents(day: -1), to: firstDayOfCurrentMonth) else {
+            return 0
+        }
+        let weekday = calendar.component(.weekday, from: lastDayOfPreviousMonth)
+        var previousSpace = weekday - calendar.firstWeekday
+        if previousSpace < 0 {
+            previousSpace += 7
+        }
+        return previousSpace
     }
     
     private func getFormatMonth(date: Date) -> String {
@@ -650,20 +642,8 @@ final class CalendarView: UIView {
         return maskLayer
     }
     
-    func clearSelection() {
-        for horizontalStack in daysVStack.arrangedSubviews {
-            for container in horizontalStack.subviews {
-                container.backgroundColor = .clear
-                container.subviews.first?.backgroundColor = .clear
-                container.layer.mask = clearShape(bounds: container.bounds)
-            }
-        }
-        saveDate = []
-        updateCalendar(nextMonth: false, isBrowsing: false)
-    }
-    
     //MARK: - Methods
-    func updateDaysSelection(with value: Int) {
+    func updateNumberOfDays(_ value: Int) {
         daysSelection = value
         saveDate = []
         updateCalendar(nextMonth: false, isBrowsing: false)
@@ -677,5 +657,17 @@ final class CalendarView: UIView {
             self.alpha = 0.5
             self.isUserInteractionEnabled = false
         }
+    }
+    
+    func clearSelection() {
+        for horizontalStack in daysVStack.arrangedSubviews {
+            for container in horizontalStack.subviews {
+                container.backgroundColor = .clear
+                container.subviews.first?.backgroundColor = .clear
+                container.layer.mask = clearShape(bounds: container.bounds)
+            }
+        }
+        saveDate = []
+        updateCalendar(nextMonth: false, isBrowsing: false)
     }
 }

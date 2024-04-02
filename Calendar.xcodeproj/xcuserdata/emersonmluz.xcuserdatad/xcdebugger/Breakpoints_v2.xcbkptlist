@@ -14,8 +14,8 @@
             filePath = "Calendar/CalendarView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "401"
-            endingLineNumber = "401"
+            startingLineNumber = "393"
+            endingLineNumber = "393"
             landmarkName = "updateSelection(nextMonth:isBrowsing:)"
             landmarkType = "7">
             <Locations>
@@ -62,8 +62,8 @@
             filePath = "Calendar/CalendarView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "409"
-            endingLineNumber = "409"
+            startingLineNumber = "401"
+            endingLineNumber = "401"
             landmarkName = "updateSelection(nextMonth:isBrowsing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "Calendar/CalendarView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "411"
-            endingLineNumber = "411"
+            startingLineNumber = "403"
+            endingLineNumber = "403"
             landmarkName = "updateSelection(nextMonth:isBrowsing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -94,8 +94,8 @@
             filePath = "Calendar/CalendarView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "403"
-            endingLineNumber = "403"
+            startingLineNumber = "395"
+            endingLineNumber = "395"
             landmarkName = "updateSelection(nextMonth:isBrowsing:)"
             landmarkType = "7">
          </BreakpointContent>

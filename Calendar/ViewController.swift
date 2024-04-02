@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(calendarView)
-        calendarView.updateDaysSelection(with: 10)
+        calendarView.updateNumberOfDays(10)
         NSLayoutConstraint.activate([
             calendarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             calendarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
