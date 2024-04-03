@@ -7,96 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E3A8326A-8CD3-4BA2-8015-5B43504D0F44"
-            shouldBeEnabled = "Yes"
+            uuid = "B5D96431-9C28-4362-8968-5A4ADE3CE946"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Calendar/CalendarView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "340"
-            endingLineNumber = "340"
-            landmarkName = "updateSelection(nextMonth:isBrowsing:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E3A8326A-8CD3-4BA2-8015-5B43504D0F44 - 2dbc4041cde76635"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Calendar.CalendarView.updateSelection(nextMonth: Swift.Bool, isBrowsing: Swift.Bool) -&gt; ()"
-                  moduleName = "Calendar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/emersonmluz/SwiftUILearning/Projects/Calendar/Calendar/CalendarView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398"
-                  offsetFromSymbolStart = "940">
-               </Location>
-               <Location
-                  uuid = "E3A8326A-8CD3-4BA2-8015-5B43504D0F44 - 2dbc4041cde76635"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Calendar.CalendarView.updateSelection(nextMonth: Swift.Bool, isBrowsing: Swift.Bool) -&gt; ()"
-                  moduleName = "Calendar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/emersonmluz/SwiftUILearning/Projects/Calendar/Calendar/CalendarView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398"
-                  offsetFromSymbolStart = "1344">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "807AE0F4-9112-4C6B-ACC1-B286A5B9B5DD"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Calendar/CalendarView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "348"
-            endingLineNumber = "348"
-            landmarkName = "updateSelection(nextMonth:isBrowsing:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B82107F9-D1DC-425B-8D95-7F72254CDC03"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Calendar/CalendarView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "350"
-            endingLineNumber = "350"
-            landmarkName = "updateSelection(nextMonth:isBrowsing:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "870F9273-EFBE-4EC1-80D4-EFC3870AD1CC"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Calendar/CalendarView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "342"
-            endingLineNumber = "342"
-            landmarkName = "updateSelection(nextMonth:isBrowsing:)"
+            startingLineNumber = "374"
+            endingLineNumber = "374"
+            landmarkName = "saveDates(dateInit:daysOfNumber:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

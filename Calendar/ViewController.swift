@@ -13,16 +13,20 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        calendarView.delegate = self
         view.addSubview(calendarView)
-        calendarView.numberOfDaysToSelec(5)
-        calendarView.colors(CalendarColor(headerTitleColor: .orange, headerBackgroundColor: .blue, weekBackgroundColor: .red, backgroundColor: .systemBlue, selectionColor: (selected: .yellow, interval: .red)))
+        calendarView.numberOfDaysToSelect(10)
         NSLayoutConstraint.activate([
             calendarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             calendarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             calendarView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         ])
+        
     }
-
-
 }
 
+extension ViewController: CalendarViewDelegate {
+    func savedDates(transfer dates: [Date]) {
+        print("asd ", dates)
+    }
+}

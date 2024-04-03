@@ -108,18 +108,57 @@ final class CalendarView: UIView {
     private var numberOfDays: Int = 0
     private var dateNowPlusDays = -1
     private var buttonTag = 1000
-    private var colorsToSelection: (interval: UIColor, selected: UIColor) = (UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1), UIColor.systemRed)
     var delegate: CalendarViewDelegate?
+    
+    var colors: (
+        monthTitle: UIColor,
+        headerBackground: UIColor,
+        weekTitles: UIColor,
+        weekBackround: UIColor,
+        sundayColor: UIColor,
+        calendarBackground: UIColor,
+        daySelected: UIColor,
+        daySelectedBackground: UIColor,
+        daysIntervalBackground: UIColor,
+        daysOfMonth: UIColor,
+        otherDays: UIColor
+    ) = (
+        .white,
+        .systemRed,
+        .systemGray,
+        .clear,
+        .systemRed,
+        .white,
+        .white,
+        UIColor.systemRed,
+        UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1),
+        UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1),
+        UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
+    ) {
+        didSet {
+            if monthYearLabel.textColor != colors.monthTitle {
+                monthYearLabel.textColor = colors.monthTitle
+                backMonthButton.tintColor = colors.monthTitle
+                nextMonthButton.tintColor = colors.monthTitle
+            }
+            else if headerHStack.backgroundColor != colors.headerBackground {
+                headerHStack.backgroundColor = colors.headerBackground
+            }
+        }
+    }
     
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupViews()
-        setupMonthNavigationButtons()
-        setupDaysOfWeekHStack()
-        setupHierarchy()
-        setupConstraints()
-        updateCalendar(nextMonth: false, isBrowsing: false)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            setupViews()
+            setupMonthNavigationButtons()
+            setupDaysOfWeekHStack()
+            setupHierarchy()
+            setupConstraints()
+            updateCalendar(nextMonth: false, isBrowsing: false)
+        }
     }
     
     @available(*, unavailable)
@@ -162,9 +201,9 @@ final class CalendarView: UIView {
             label.text = day.rawValue
             label.font = .systemFont(ofSize: 14, weight: .bold)
             if day == .sunday {
-                label.textColor = .systemRed
+                label.textColor = colors.sundayColor
             } else {
-                label.textColor = .systemGray
+                label.textColor = colors.weekTitles
             }
             label.numberOfLines = 1
             label.textAlignment = .center
@@ -255,15 +294,15 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Actions Day Tapped
-    @objc func dayButtonTapped(_ sender: UIButton) {
+    @objc private func dayButtonTapped(_ sender: UIButton) {
         guard numberOfDays > 1 else { return }
         guard validateSelection(sender) else { return }
         clearSelection()
         
         let (_, selectionColor) = selectionColor()
         sender.backgroundColor = selectionColor
-        sender.titleLabel?.textColor = .white
-        sender.setTitleColor(.white, for: .normal)
+        sender.titleLabel?.textColor = colors.daySelected
+        sender.setTitleColor(colors.daySelected, for: .normal)
         
         DispatchQueue.main.async { [weak self] in
             guard let self, let titleLabel = sender.titleLabel, let day = titleLabel.text else { return }
@@ -274,7 +313,7 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Action Navigation
-    @objc func monthNavigationAction(_ sender: UIButton) {
+    @objc private func monthNavigationAction(_ sender: UIButton) {
         let previousMonth = -1
         let nextMonth = 1
         let valueToCalcMonth = sender === backMonthButton ? previousMonth : nextMonth
@@ -362,9 +401,8 @@ final class CalendarView: UIView {
                 for container in horizontalStack.subviews {
                     if let button = container.subviews.first as? UIButton {
                         let dayCalendar = button.titleLabel?.text
-                        let customBlack = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1)
                         
-                        if dayCalendar == String(dayBase), monthCalendar == monthBase, button.currentTitleColor == customBlack {
+                        if dayCalendar == String(dayBase), monthCalendar == monthBase, button.currentTitleColor == colors.daysOfMonth {
                             
                             guard !existSelection(dayCalendar ?? "") else { return }
                             let dateFirst = savedDates.first
@@ -376,8 +414,8 @@ final class CalendarView: UIView {
                                 
                                 if date == dateFirst || date == dateLast {
                                     button.backgroundColor = selectionColor
-                                    button.titleLabel?.textColor = .white
-                                    button.setTitleColor(.white, for: .normal)
+                                    button.titleLabel?.textColor = colors.daySelected
+                                    button.setTitleColor(colors.daySelected, for: .normal)
                                     if date == dateFirst {
                                         DispatchQueue.main.async { [weak self] in
                                             container.layer.mask = self?.shapeLeft(container)
@@ -428,7 +466,6 @@ final class CalendarView: UIView {
         let lastMonth = Calendar.current.component(.month, from: lastDate)
         let monthCalendar = Calendar.current.component(.month, from: calendarMonth)
         let (intervalColor, selectionColor) = selectionColor()
-        let customGrey = UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
         var futureDays = days
         
         for container in horizontalStack.subviews {
@@ -441,16 +478,16 @@ final class CalendarView: UIView {
                         container.backgroundColor = .clear
                     } else if firstDay < 7, day == firstDay {
                         button.backgroundColor = selectionColor
-                        button.titleLabel?.textColor = .white
-                        button.setTitleColor(.white, for: .normal)
+                        button.titleLabel?.textColor = colors.daySelected
+                        button.setTitleColor(colors.daySelected, for: .normal)
                         DispatchQueue.main.async { [weak self] in
                             container.layer.mask = self?.shapeLeft(container)
                         }
                     }
                     if day == lastDay, container.backgroundColor == intervalColor, monthCalendar == firstMonth {
                         button.backgroundColor = selectionColor
-                        button.titleLabel?.textColor = .white
-                        button.setTitleColor(.white, for: .normal)
+                        button.titleLabel?.textColor = colors.daySelected
+                        button.setTitleColor(colors.daySelected, for: .normal)
                         DispatchQueue.main.async { [weak self] in
                             container.layer.mask = self?.shapeRight(container)
                             if monthCalendar == 1 {
@@ -459,7 +496,7 @@ final class CalendarView: UIView {
                             }
                         }
                     }
-                    if monthCalendar < firstMonth, day < firstDay, button.titleLabel?.textColor == customGrey {
+                    if monthCalendar < firstMonth, day < firstDay, button.titleLabel?.textColor == colors.otherDays {
                         container.backgroundColor = .clear
                         button.backgroundColor = .clear
                     }
@@ -472,11 +509,10 @@ final class CalendarView: UIView {
     private func fillRemainingDays(nextMonth: Bool, daysRemaining: Int) {
         guard let horizontalStack = daysVStack.arrangedSubviews.first, nextMonth else { return }
         let (intervalColor, selectionColor) = selectionColor()
-        let customBlack = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1)
         var numberRemaining = 0
         for container in horizontalStack.subviews {
             if let button = container.subviews.first as? UIButton {
-                if button.currentTitleColor != customBlack {
+                if button.currentTitleColor != colors.daysOfMonth {
                     numberRemaining += 1
                 }
             }
@@ -490,8 +526,8 @@ final class CalendarView: UIView {
                         container.backgroundColor = intervalColor
                         if incrementTag == rangeInit {
                             button.backgroundColor = selectionColor
-                            button.titleLabel?.textColor = .white
-                            button.setTitleColor(.white, for: .normal)
+                            button.titleLabel?.textColor = colors.daySelected
+                            button.setTitleColor(colors.daySelected, for: .normal)
                             DispatchQueue.main.async { [weak self] in
                                 container.layer.mask = self?.shapeLeft(container)
                             }
@@ -504,14 +540,14 @@ final class CalendarView: UIView {
     
     //MARK: - Func Exist Selection
     private func existSelection(_ day: String?) -> Bool {
-        let secondaryColor = UIColor.systemRed
+        let daySelected = colors.daySelectedBackground
         for horizontalStack in daysVStack.arrangedSubviews {
             for container in horizontalStack.subviews {
                 if let button = container.subviews.first as? UIButton {
-                    if button.titleLabel?.text == day, button.backgroundColor == secondaryColor {
+                    if button.titleLabel?.text == day, button.backgroundColor == daySelected {
                         return true
                     }
-                    if button.backgroundColor == secondaryColor, day == nil {
+                    if button.backgroundColor == daySelected, day == nil {
                         return true
                     }
                 }
@@ -562,7 +598,7 @@ final class CalendarView: UIView {
     
     //MARK: - Func Selection Color
     private func selectionColor() -> (UIColor, UIColor) {
-        return colorsToSelection
+        return (colors.daysIntervalBackground, colors.daySelectedBackground)
     }
     
     //MARK: - Func Validate Selection
@@ -570,13 +606,12 @@ final class CalendarView: UIView {
         guard let day = Int(sender.currentTitle ?? "") else {
             return false
         }
-        let customBlack = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1)
         let month = Calendar.current.component(.month, from: calendarMonth)
         let year = Calendar.current.component(.year, from: calendarMonth)
         let dateSuggestionString = "\(year)-\(month)-\(day)"
         let dateSuggestion = formatStringToDate(with: dateSuggestionString)
         let datePlus = Calendar.current.date(byAdding: .day, value: dateNowPlusDays, to: Date())
-        guard let dateMinimum = datePlus, dateSuggestion >= dateMinimum, sender.titleLabel?.textColor == customBlack else { return false }
+        guard let dateMinimum = datePlus, dateSuggestion >= dateMinimum, sender.titleLabel?.textColor == colors.daysOfMonth else { return false }
         return true
     }
     
@@ -607,9 +642,8 @@ final class CalendarView: UIView {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(String(day), for: .normal)
-        let customBlack = UIColor(red: 68/255, green: 68/255, blue: 68/255, alpha: 1)
-        button.setTitleColor(customBlack, for: .normal)
-        button.titleLabel?.textColor = customBlack
+        button.setTitleColor(colors.daysOfMonth, for: .normal)
+        button.titleLabel?.textColor = colors.daysOfMonth
         button.titleLabel?.font = .systemFont(ofSize: 16)
         button.titleLabel?.textAlignment = .center
         button.tag = buttonTag
@@ -645,8 +679,8 @@ final class CalendarView: UIView {
             ? monthInterval.upperBound - adjustDaysOfTheMonth
             : monthInterval.lowerBound + adjustDaysOfTheMonth - adjustBound
         let button = createDayButton(day: dayPreviousMonth)
-        let customGrey = UIColor(red: 167/255, green: 167/255, blue: 167/255, alpha: 1)
-        button.setTitleColor(customGrey, for: .normal)
+        button.setTitleColor(colors.otherDays, for: .normal)
+        button.titleLabel?.textColor = colors.otherDays
         return button
     }
     
@@ -671,24 +705,13 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Methods
-    func colors(_ calendarColor: CalendarColor) {
-        monthYearLabel.textColor = calendarColor.headerTitleColor
-        headerHStack.backgroundColor = calendarColor.headerBackgroundColor
-        daysOfWeekHStack.backgroundColor = calendarColor.weekBackgroundColor
-        backgroundColor = calendarColor.backgroundColor
-        if let selectionColors = calendarColor.selectionColor {
-            colorsToSelection.selected = selectionColors.selected
-            colorsToSelection.interval = selectionColors.interval
-        }
-    }
-    
     func calendarMonthInit(nowPlus: Int) {
         let date = Date()
         calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
     
-    func numberOfDaysToSelec(_ value: Int) {
+    func numberOfDaysToSelect(_ value: Int) {
         numberOfDays = value
         savedDates = []
         updateCalendar(nextMonth: false, isBrowsing: false)
@@ -725,23 +748,5 @@ final class CalendarView: UIView {
         case thursday = "Qui"
         case friday = "Sex"
         case saturday = "Sáb"
-    }
-}
-
-struct CalendarColor {
-    var headerTitleColor: UIColor?
-    var headerBackgroundColor: UIColor?
-    var weekBackgroundColor: UIColor?
-    var weekTitleColor: UIColor?
-    var backgroundColor: UIColor?
-    var selectionColor: (selected: UIColor, interval: UIColor)?
-    
-    init(headerTitleColor: UIColor? = .white, headerBackgroundColor: UIColor? = .systemRed, weekBackgroundColor: UIColor? = .clear, weekTitleColor: UIColor? = .systemGray, backgroundColor: UIColor? = .white, selectionColor: (selected: UIColor, interval: UIColor)? = (UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1), UIColor.systemRed)) {
-        self.headerTitleColor = headerTitleColor
-        self.headerBackgroundColor = headerBackgroundColor
-        self.weekBackgroundColor = weekBackgroundColor
-        self.weekTitleColor = weekTitleColor
-        self.backgroundColor = backgroundColor
-        self.selectionColor = selectionColor
     }
 }
