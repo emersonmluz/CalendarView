@@ -108,6 +108,7 @@ final class CalendarView: UIView {
     private var numberOfDays: Int = 0
     private var dateNowPlusDays = -1
     private var buttonTag = 1000
+    private var colorsToSelection: (interval: UIColor, selected: UIColor) = (UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1), UIColor.systemRed)
     var delegate: CalendarViewDelegate?
     
     //MARK: - Init
@@ -561,8 +562,7 @@ final class CalendarView: UIView {
     
     //MARK: - Func Selection Color
     private func selectionColor() -> (UIColor, UIColor) {
-        let intervalColor = UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1)
-        return (intervalColor, .systemRed)
+        return colorsToSelection
     }
     
     //MARK: - Func Validate Selection
@@ -671,6 +671,17 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Methods
+    func colors(_ calendarColor: CalendarColor) {
+        monthYearLabel.textColor = calendarColor.headerTitleColor
+        headerHStack.backgroundColor = calendarColor.headerBackgroundColor
+        daysOfWeekHStack.backgroundColor = calendarColor.weekBackgroundColor
+        backgroundColor = calendarColor.backgroundColor
+        if let selectionColors = calendarColor.selectionColor {
+            colorsToSelection.selected = selectionColors.selected
+            colorsToSelection.interval = selectionColors.interval
+        }
+    }
+    
     func calendarMonthInit(nowPlus: Int) {
         let date = Date()
         calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
@@ -705,8 +716,8 @@ final class CalendarView: UIView {
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
     
-    //MARK: - Enum
-    enum DaysOfWeek: String {
+    //MARK: - Enum Days of Week
+    private enum DaysOfWeek: String {
         case sunday = "Dom"
         case monday = "Seg"
         case tuesday = "Ter"
@@ -714,5 +725,23 @@ final class CalendarView: UIView {
         case thursday = "Qui"
         case friday = "Sex"
         case saturday = "Sáb"
+    }
+}
+
+struct CalendarColor {
+    var headerTitleColor: UIColor?
+    var headerBackgroundColor: UIColor?
+    var weekBackgroundColor: UIColor?
+    var weekTitleColor: UIColor?
+    var backgroundColor: UIColor?
+    var selectionColor: (selected: UIColor, interval: UIColor)?
+    
+    init(headerTitleColor: UIColor? = .white, headerBackgroundColor: UIColor? = .systemRed, weekBackgroundColor: UIColor? = .clear, weekTitleColor: UIColor? = .systemGray, backgroundColor: UIColor? = .white, selectionColor: (selected: UIColor, interval: UIColor)? = (UIColor(red: 237/255, green: 237/255, blue: 237/255, alpha: 1), UIColor.systemRed)) {
+        self.headerTitleColor = headerTitleColor
+        self.headerBackgroundColor = headerBackgroundColor
+        self.weekBackgroundColor = weekBackgroundColor
+        self.weekTitleColor = weekTitleColor
+        self.backgroundColor = backgroundColor
+        self.selectionColor = selectionColor
     }
 }

@@ -15,6 +15,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(calendarView)
         calendarView.numberOfDaysToSelec(5)
+        calendarView.colors(CalendarColor(headerTitleColor: .orange, headerBackgroundColor: .blue, weekBackgroundColor: .red, backgroundColor: .systemBlue, selectionColor: (selected: .yellow, interval: .red)))
         NSLayoutConstraint.activate([
             calendarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             calendarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
