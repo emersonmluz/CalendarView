@@ -108,6 +108,7 @@ final class CalendarView: UIView {
     private var numberOfDays: Int = 0
     private var dateNowPlusDays = -1
     private var buttonTag = 1000
+    var enableInteraction = false
     var delegate: CalendarViewDelegate?
     
     var colors: (
@@ -295,7 +296,7 @@ final class CalendarView: UIView {
     
     //MARK: - Actions Day Tapped
     @objc private func dayButtonTapped(_ sender: UIButton) {
-        guard numberOfDays > 1 else { return }
+        guard enableInteraction == true else { return }
         guard validateSelection(sender) else { return }
         clearSelection()
         
@@ -410,7 +411,9 @@ final class CalendarView: UIView {
                             
                             DispatchQueue.main.async { [weak self] in
                                 guard let self else { return }
-                                container.backgroundColor = intervalColor
+                                if numberOfDays > 1 {
+                                    container.backgroundColor = intervalColor
+                                }
                                 
                                 if date == dateFirst || date == dateLast {
                                     button.backgroundColor = selectionColor
