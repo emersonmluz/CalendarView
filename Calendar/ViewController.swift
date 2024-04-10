@@ -15,8 +15,9 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         calendarView.delegate = self
         view.addSubview(calendarView)
-        calendarView.numberOfDaysToSelect(7)
-        calendarView.enableInteraction = true
+        
+        calendarView.enableInteraction = false
+        
         NSLayoutConstraint.activate([
             calendarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             calendarView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),

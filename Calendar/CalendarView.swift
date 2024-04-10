@@ -105,11 +105,21 @@ final class CalendarView: UIView {
     //MARK: - Property
     private var calendarMonth = Date()
     private var savedDates: [Date] = []
-    private var numberOfDays: Int = 0
+    private var interval = false
     private var dateNowPlusDays = -1
     private var buttonTag = 1000
     var enableInteraction = false
     var delegate: CalendarViewDelegate?
+    
+    private var numberOfDays: Int = 0 {
+        didSet {
+            if numberOfDays <= 0 {
+                interval = false
+            } else {
+                interval = true
+            }
+        }
+    }
     
     var colors: (
         monthTitle: UIColor,
@@ -291,11 +301,16 @@ final class CalendarView: UIView {
             }
         }
         
-        updateSelection(nextMonth: nextMonth, isBrowsing: isBrowsing)
+        if interval {
+            updateSelection(nextMonth: nextMonth, isBrowsing: isBrowsing)
+        } else {
+            updateOneSelection(nextMonth: nextMonth, isBrowsing: isBrowsing)
+        }
+        
     }
     
     //MARK: - Actions Day Tapped
-    @objc private func dayButtonTapped(_ sender: UIButton) {
+    @objc private func dayButtonTap(_ sender: UIButton) {
         guard enableInteraction == true else { return }
         guard validateSelection(sender) else { return }
         clearSelection()
@@ -310,6 +325,50 @@ final class CalendarView: UIView {
             let adjustMonth: Int = 0
             saveSelection(dayInit: day, adjustMonth: adjustMonth)
             updateCalendar(nextMonth: false, isBrowsing: false)
+        }
+    }
+    
+    @objc private func selectDayTap(_ sender: UIButton) {
+        guard enableInteraction == true, let day = sender.titleLabel?.text, !existSelection(day), sender.titleLabel?.textColor == colors.daysOfMonth
+        else {
+            sender.backgroundColor = .clear
+            if sender.titleLabel?.textColor == colors.daySelected {
+                sender.titleLabel?.textColor = colors.daysOfMonth
+                sender.setTitleColor(colors.daysOfMonth, for: .normal)
+            }
+            let year = Calendar.current.component(.year, from: calendarMonth)
+            let month = Calendar.current.component(.month, from: calendarMonth)
+            let dateString = "\(year)-\(month)-\(sender.titleLabel?.text ?? "")"
+            let date = formatStringToDate(with: dateString)
+            if savedDates.count > 0 {
+                for index in 0...savedDates.count - 1 {
+                    if savedDates[index] == date {
+                        savedDates.remove(at: index)
+                        break
+                    }
+                }
+            }
+            return
+        }
+        
+        let (_, selectionColor) = selectionColor()
+        sender.backgroundColor = selectionColor
+        sender.titleLabel?.textColor = colors.daySelected
+        sender.setTitleColor(colors.daySelected, for: .normal)
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let titleLabel = sender.titleLabel, let day = titleLabel.text else { return }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            let formatDate = formatDateToSave(dayInit: day)
+            if let date = dateFormatter.date(from: formatDate) {
+                savedDates.append(date)
+                let removeDuplicates = Set(savedDates)
+                savedDates = Array(removeDuplicates)
+                let dates = savedDates.sorted()
+                delegate?.savedDates(transfer: dates)
+                updateCalendar(nextMonth: false, isBrowsing: false)
+            }
         }
     }
     
@@ -456,6 +515,41 @@ final class CalendarView: UIView {
             guard let self else { return }
             fillFutureDays(daysFuture)
             fillRemainingDays(nextMonth: nextMonth, daysRemaining: daysRemaining)
+        }
+    }
+    
+    //MARK: - Update One Selection
+    private func updateOneSelection(nextMonth: Bool, isBrowsing: Bool) {
+        guard !savedDates.isEmpty else { return }
+        
+        let (_, selectionColor) = selectionColor()
+        
+        for date in savedDates {
+            let dayBase = Calendar.current.component(.day, from: date)
+            let monthBase = Calendar.current.component(.month, from: date)
+            let monthCalendar = Calendar.current.component(.month, from: calendarMonth)
+            let yearBase = Calendar.current.component(.year, from: date)
+            let yearCalendar = Calendar.current.component(.year, from: calendarMonth)
+            
+            for horizontalStack in daysVStack.arrangedSubviews {
+                for container in horizontalStack.subviews {
+                    if let button = container.subviews.first as? UIButton {
+                        let dayCalendar = button.titleLabel?.text
+                        
+                        if dayCalendar == String(dayBase), monthCalendar == monthBase, yearBase == yearCalendar, button.currentTitleColor == colors.daysOfMonth {
+                            
+                            guard !existSelection(dayCalendar ?? "") else { return }
+                            
+                            DispatchQueue.main.async { [weak self] in
+                                guard let self else { return }
+                                button.backgroundColor = selectionColor
+                                button.titleLabel?.textColor = colors.daySelected
+                                button.setTitleColor(colors.daySelected, for: .normal)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -654,7 +748,11 @@ final class CalendarView: UIView {
         button.frame = CGRect(x: 50, y: 50, width: 50, height: 50)
         button.layer.cornerRadius = 15
         button.clipsToBounds = true
-        button.addTarget(self, action: #selector(dayButtonTapped(_:)), for: .touchUpInside)
+        if interval {
+            button.addTarget(self, action: #selector(dayButtonTap(_:)), for: .touchUpInside)
+        } else {
+            button.addTarget(self, action: #selector(selectDayTap(_:)), for: .touchUpInside)
+        }
         return button
     }
     
@@ -714,7 +812,7 @@ final class CalendarView: UIView {
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
     
-    func numberOfDaysToSelect(_ value: Int) {
+    func numberOfContinuousDays(_ value: Int) {
         numberOfDays = value
         savedDates = []
         updateCalendar(nextMonth: false, isBrowsing: false)
