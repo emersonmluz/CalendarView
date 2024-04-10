@@ -310,7 +310,7 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Actions Day Tapped
-    @objc private func dayButtonTap(_ sender: UIButton) {
+    @objc private func dayContinuousAction(_ sender: UIButton) {
         guard enableInteraction == true else { return }
         guard validateSelection(sender) else { return }
         clearSelection()
@@ -328,7 +328,7 @@ final class CalendarView: UIView {
         }
     }
     
-    @objc private func selectDayTap(_ sender: UIButton) {
+    @objc private func selectOneDayAction(_ sender: UIButton) {
         guard enableInteraction == true, let day = sender.titleLabel?.text, !existSelection(day), sender.titleLabel?.textColor == colors.daysOfMonth
         else {
             sender.backgroundColor = .clear
@@ -749,9 +749,9 @@ final class CalendarView: UIView {
         button.layer.cornerRadius = 15
         button.clipsToBounds = true
         if interval {
-            button.addTarget(self, action: #selector(dayButtonTap(_:)), for: .touchUpInside)
+            button.addTarget(self, action: #selector(dayContinuousAction(_:)), for: .touchUpInside)
         } else {
-            button.addTarget(self, action: #selector(selectDayTap(_:)), for: .touchUpInside)
+            button.addTarget(self, action: #selector(selectOneDayAction(_:)), for: .touchUpInside)
         }
         return button
     }
