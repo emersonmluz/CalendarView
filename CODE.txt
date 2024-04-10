@@ -118,7 +118,7 @@ final class CalendarView: UIView {
         monthTitle: UIColor,
         headerBackground: UIColor,
         weekTitles: UIColor,
-        weekBackround: UIColor,
+        weekBackground: UIColor,
         sundayColor: UIColor,
         calendarBackground: UIColor,
         daySelected: UIColor,
@@ -145,8 +145,11 @@ final class CalendarView: UIView {
                 backMonthButton.tintColor = colors.monthTitle
                 nextMonthButton.tintColor = colors.monthTitle
             }
-            else if headerHStack.backgroundColor != colors.headerBackground {
+            if headerHStack.backgroundColor != colors.headerBackground {
                 headerHStack.backgroundColor = colors.headerBackground
+            }
+            if daysOfWeekHStack.backgroundColor != colors.weekBackground {
+                daysOfWeekHStack.backgroundColor = colors.weekBackground
             }
         }
     }
@@ -173,7 +176,7 @@ final class CalendarView: UIView {
     //MARK: - Setup
     private func setupViews() {
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .white
+        backgroundColor = colors.calendarBackground
         layer.borderWidth = 1
         let customGrey = UIColor(red: 0, green: 0, blue: 0, alpha: 0.4).cgColor
         layer.borderColor = customGrey
