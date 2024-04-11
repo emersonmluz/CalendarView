@@ -34,8 +34,7 @@ Implemente o método **func savedDates(transfer dates: [Date]) {}**:
 
 **extension ViewController: CalendarViewDelegate {**<br>
     **func savedDates(transfer dates: [Date]) {**<br>
-        **print(dates)**<br>
-    **}**<br>
+        **print(dates) }**<br>
 **}**<br>
 
 ## Alteração de cores
