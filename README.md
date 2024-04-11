@@ -26,6 +26,18 @@ Mas também é possível alterar para dias corridos. Para isso basta informar o 
 
 <img width="427" alt="Captura de Tela 2024-04-10 às 14 35 43" src="https://github.com/emersonmluz/CalendarView/assets/111133275/9ee7dc96-3101-4035-9637-f7cd73ed212c">
 
+Para recuperar os dias selecionados atribua o **delegate** a sua instância:
+
+**calendarView.delegate = self**
+
+Implemente o método **func savedDates(transfer dates: [Date]) {}**:
+
+extension ViewController: CalendarViewDelegate {
+    func savedDates(transfer dates: [Date]) {
+        print(dates)
+    }
+}
+
 ## Alteração de cores
 
 Para customizar as cores acesse a propriedade **colors**:
