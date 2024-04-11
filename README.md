@@ -16,7 +16,7 @@ Existe dois tipos de seleção, o default é poder selecionar dias variados conf
 
 Mas também é possível alterar para dias corridos. Para isso basta informar o número de dias no argumento do método **numberOfContinuousDays**, então ao selecionar um dia irá selecionar a quantidade de dias corridos.
 
-<span style="color:red">**calendarView.numberOfContinuousDays(15)**</span>
+**calendarView.numberOfContinuousDays(15)**
 
 <img width="427" alt="Captura de Tela 2024-04-10 às 14 35 30" src="https://github.com/emersonmluz/CalendarView/assets/111133275/ced1c744-962b-4847-8d50-6a590c6ff2e9">
 
@@ -26,14 +26,14 @@ Mas também é possível alterar para dias corridos. Para isso basta informar o 
 
 Também é possível customizar as cores acessando a propriedade **colors**:
 
-**calendarView.colors.monthTitle**
-**calendarView.colors.headerBackground**
-**calendarView.colors.weekTitles**
-**calendarView.colors.weekBackground**
-**calendarView.colors.sundayColor**
-**calendarView.colors.daySelected**
-**calendarView.colors.daySelectedBackground**
-**calendarView.colors.daysIntervalBackground**
-**calendarView.colors.calendarBackground**
-**calendarView.colors.daysOfMonth**
-**calendarView.colors.otherDays**
+**calendarView.colors.monthTitle**<br>
+**calendarView.colors.headerBackground**<br>
+**calendarView.colors.weekTitles**<br>
+**calendarView.colors.weekBackground**<br>
+**calendarView.colors.sundayColor**<br>
+**calendarView.colors.daySelected**<br>
+**calendarView.colors.daySelectedBackground**<br>
+**calendarView.colors.daysIntervalBackground**<br>
+**calendarView.colors.calendarBackground**<br>
+**calendarView.colors.daysOfMonth**<br>
+**calendarView.colors.otherDays**<br>
