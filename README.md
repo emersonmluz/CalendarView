@@ -38,7 +38,7 @@ Implemente o protocolo **CalendarViewDelegate**:
 
 ## Alteração de cores
 
-Para customizar as cores acesse a propriedade **colors**:
+Para customizar as cores acesse a propriedade **colors** e atribua uma UIColor:
 
 **calendarView.colors.monthTitle**<br>
 **calendarView.colors.headerBackground**<br>
