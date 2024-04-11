@@ -324,8 +324,9 @@ final class CalendarView: UIView {
         }
     }
     
+    //MARK: - Actions Select one day
     @objc private func selectOneDayAction(_ sender: UIButton) {
-        guard enableInteraction == true, let day = sender.titleLabel?.text, !existSelection(day), sender.titleLabel?.textColor == colors.daysOfMonth
+        guard enableInteraction == true, let day = sender.titleLabel?.text, !existSelection(day), sender.titleLabel?.textColor == colors.daysOfMonth, validateSelection(sender)
         else {
             sender.backgroundColor = .clear
             if sender.titleLabel?.textColor == colors.daySelected {
@@ -806,6 +807,10 @@ final class CalendarView: UIView {
         let date = Date()
         calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
         updateCalendar(nextMonth: false, isBrowsing: false)
+    }
+    
+    func dayPlus(_ dplus: Int) {
+        dateNowPlusDays = dplus - 1
     }
     
     func numberOfContinuousDays(_ value: Int) {
