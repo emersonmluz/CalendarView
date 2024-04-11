@@ -33,8 +33,7 @@ Para recuperar os dias selecionados atribua o **delegate** a sua instância:
 Implemente o protocolo **CalendarViewDelegate**:
 
 **extension ViewController: CalendarViewDelegate {**<br>
-    **func savedDates(transfer dates: [Date]) {**<br>
-        **print(dates) }**<br>
+    **func savedDates(transfer dates: [Date]) { }**<br>
 **}**<br>
 
 ## Alteração de cores
