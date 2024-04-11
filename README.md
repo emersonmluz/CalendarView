@@ -16,7 +16,7 @@ Existe dois tipos de seleção, o default é poder selecionar dias variados conf
 
 Mas também é possível alterar para dias corridos. Para isso basta informar o número de dias no argumento do método **numberOfContinuousDays**, então ao selecionar um dia irá selecionar a quantidade de dias corridos.
 
-**calendarView.numberOfContinuousDays(15)**
+<span style="color:red">**calendarView.numberOfContinuousDays(15)**</span>
 
 <img width="427" alt="Captura de Tela 2024-04-10 às 14 35 30" src="https://github.com/emersonmluz/CalendarView/assets/111133275/ced1c744-962b-4847-8d50-6a590c6ff2e9">
 
