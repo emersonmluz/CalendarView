@@ -10,6 +10,8 @@ Você pode usar o CalendarView para exibir apenas o calendário como também pod
 
 **calendarView.enableInteraction = true**
 
+## Seleção de dias
+
 Existe dois tipos de seleção, o default é poder selecionar dias variados conforme a imagem abaixo:
 
 <img width="427" alt="Captura de Tela 2024-04-10 às 14 33 00" src="https://github.com/emersonmluz/CalendarView/assets/111133275/78725261-5f47-4cc8-8185-b7a77c6280a6">
@@ -24,7 +26,9 @@ Mas também é possível alterar para dias corridos. Para isso basta informar o 
 
 <img width="427" alt="Captura de Tela 2024-04-10 às 14 35 43" src="https://github.com/emersonmluz/CalendarView/assets/111133275/9ee7dc96-3101-4035-9637-f7cd73ed212c">
 
-Também é possível customizar as cores acessando a propriedade **colors**:
+## Alteração de cores
+
+Para customizar as cores acesse a propriedade **colors**:
 
 **calendarView.colors.monthTitle**<br>
 **calendarView.colors.headerBackground**<br>
@@ -37,3 +41,5 @@ Também é possível customizar as cores acessando a propriedade **colors**:
 **calendarView.colors.calendarBackground**<br>
 **calendarView.colors.daysOfMonth**<br>
 **calendarView.colors.otherDays**<br>
+
+<img width="427" alt="Captura de Tela 2024-04-10 às 14 55 29" src="https://github.com/emersonmluz/CalendarView/assets/111133275/ca21a21b-4332-4996-983b-ebb287af59ec">
