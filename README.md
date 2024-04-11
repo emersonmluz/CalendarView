@@ -4,7 +4,7 @@
 
 ## Como usar
 
-Por trata-se de uma UIView, para adicionar ao projeto basta copiar o código e inserir como uma nova classe, então é só criar uma instância e adiciona-la a hierarquia da sua view e configurar as constraints.
+Por trata-se de uma UIView, para adicionar ao seu projeto basta copiar o código e inserir como uma nova classe, então é só criar uma instância e adiciona-la a hierarquia da sua view e configurar as constraints.
 
 Você pode usar o CalendarView para exibir apenas o calendário como também pode selecionar dias para alguma finalidade, por padrão ele vem desabilitado para interação, mas você pode habilitar a seleção de dias usando o método **enableInteraction** conforme abaixo: 
 
