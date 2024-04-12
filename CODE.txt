@@ -99,7 +99,7 @@ final class CalendarView: UIView {
     private var calendarMonth = Date()
     private var savedDates: [Date] = []
     private var interval = false
-    private var dateNowPlusDays = -1
+    private var dayPlus = -1
     private var buttonTag = 1000
     var enableInteraction = false
     var delegate: CalendarViewDelegate?
@@ -704,7 +704,7 @@ final class CalendarView: UIView {
         let year = Calendar.current.component(.year, from: calendarMonth)
         let dateSuggestionString = "\(year)-\(month)-\(day)"
         let dateSuggestion = formatStringToDate(with: dateSuggestionString)
-        let datePlus = Calendar.current.date(byAdding: .day, value: dateNowPlusDays, to: Date())
+        let datePlus = Calendar.current.date(byAdding: .day, value: dayPlus, to: Date())
         guard let dateMinimum = datePlus, dateSuggestion >= dateMinimum, sender.titleLabel?.textColor == colors.daysOfMonth else { return false }
         return true
     }
@@ -803,14 +803,19 @@ final class CalendarView: UIView {
     }
     
     //MARK: - Methods
-    func calendarMonthInit(nowPlus: Int) {
-        let date = Date()
-        calendarMonth = Calendar.current.date(byAdding: .month, value: nowPlus, to: date) ?? Date()
+    func dateInit(month: Int, year: Int) {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        let calendar = Calendar.current
+        if let date = calendar.date(from: components) {
+            calendarMonth = date
+        }
         updateCalendar(nextMonth: false, isBrowsing: false)
     }
     
     func dayPlus(_ dplus: Int) {
-        dateNowPlusDays = dplus - 1
+        dayPlus = dplus - 1
     }
     
     func numberOfContinuousDays(_ value: Int) {
