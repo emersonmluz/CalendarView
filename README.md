@@ -10,6 +10,7 @@ Você pode usar o CalendarView para exibir apenas o calendário como também pod
 
 **calendarView.enableInteraction = true**
 
+
 ### Seleção de dias
 
 Existe dois tipos de seleção, o default é poder selecionar dias variados conforme a imagem abaixo:
@@ -35,6 +36,22 @@ Implemente o protocolo **CalendarViewDelegate**:
 **extension ViewController: CalendarViewDelegate {**<br>
     **func savedDates(transfer dates: [Date]) { }**<br>
 **}**<br>
+
+
+### Métodos
+
+A seguir veja os métodos disponíveis em CalendarView:
+
+**dateInit(month: Int, year: Int):** Por padrão, o calendário sempre é aberto no mês atual, mas você definir o ano e o mês que será iniciado.
+
+**dayPlus(Int):** Defini que a seleção só é possível apartir da data atual mais o número de dias indicado.
+
+**numberOfContinuousDays(Int):** Defini quantos dias corridos será automaticamente selecionado após clicar em algum dia. Quando não definido ou se o valor for 0 ou menor equivale a seleção livre de dias. Se for definido 1 só será possível selecionar 1 dia, se o valor for maior que um será selecionado automaticamente o número indicado de dias, se optar por essa opção só é possível ter um intervalo de dias por vez, ou seja, se já houver dias selecionado e você clicar em outro dia, será apagado a seleção atual e o último dia será considerado a data inicial para o novo intervalo. 
+
+**enabledCalendar(Bool):** Habilita ou desabilita o calendário, isso não se refere a interação de seleção de dias, mas sim em interagir com o calendário de forma geral, incluindo navegação. Qunado passado o valor false o calendário ficará com a cor enfraquecida indicando que não há como interagir.
+
+**clearSelection():** Limpa toda seleção do calendário.
+
 
 ### Alteração de cores
 
