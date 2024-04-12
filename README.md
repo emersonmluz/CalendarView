@@ -13,7 +13,7 @@ Você pode usar o CalendarView para exibir apenas o calendário como também pod
 
 ### Seleção de dias
 
-Existe dois tipos de seleção, o default é poder selecionar dias variados conforme a imagem abaixo:
+Existe dois tipos de seleção, o default é a seleção livre de dias conforme a imagem abaixo:
 
 <img width="427" alt="Captura de Tela 2024-04-10 às 14 33 00" src="https://github.com/emersonmluz/CalendarView/assets/111133275/78725261-5f47-4cc8-8185-b7a77c6280a6">
 
