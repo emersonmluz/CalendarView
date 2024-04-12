@@ -6,11 +6,11 @@
 
 Por trata-se de uma UIView, para adicionar ao seu projeto basta copiar o código e inserir como uma nova classe, então é só criar uma instância, adiciona-la a hierarquia da sua view e configurar as constraints.
 
-Você pode usar o CalendarView para exibir apenas o calendário como também pode selecionar dias para alguma finalidade, por padrão ele vem desabilitado para interação, mas você pode habilitar a seleção de dias usando o método **enableInteraction** conforme abaixo: 
+Você pode usar o CalendarView para exibir apenas o calendário como também pode selecionar dias para alguma finalidade, por padrão ele vem desabilitado para interação, mas você pode habilitar a seleção de dias acessando a propriedade **enableInteraction** conforme abaixo: 
 
 **calendarView.enableInteraction = true**
 
-## Seleção de dias
+### Seleção de dias
 
 Existe dois tipos de seleção, o default é poder selecionar dias variados conforme a imagem abaixo:
 
@@ -36,7 +36,7 @@ Implemente o protocolo **CalendarViewDelegate**:
     **func savedDates(transfer dates: [Date]) { }**<br>
 **}**<br>
 
-## Alteração de cores
+### Alteração de cores
 
 Para customizar as cores acesse o elemento que deseja alterar na propriedade **colors** e atribua uma UIColor:
 
