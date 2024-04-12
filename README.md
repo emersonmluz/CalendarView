@@ -48,7 +48,7 @@ A seguir veja os métodos disponíveis em CalendarView:
 
 **numberOfContinuousDays(Int)**<br>Defini quantos dias corridos será automaticamente selecionado após clicar em algum dia. Quando não definido ou se o valor for 0 ou menor equivale a seleção livre de dias. Se for definido 1 só será possível selecionar 1 dia, se o valor for maior que um será selecionado automaticamente o número indicado de dias, se optar por essa opção só é possível ter um intervalo de dias por vez, ou seja, se já houver dias selecionado e você clicar em outro dia, será apagado a seleção atual e o último dia será considerado a data inicial para o novo intervalo. 
 
-**enabledCalendar(Bool)**<br>Habilita ou desabilita o calendário, isso não se refere a interação de seleção de dias, mas sim em interagir com o calendário de forma geral, incluindo navegação. Qunado passado o valor false o calendário ficará com a cor enfraquecida indicando que não há como interagir.
+**enabledCalendar(Bool)**<br>Habilita ou desabilita o calendário, isso não se refere a interação de seleção de dias, mas sim em interagir com o calendário de forma geral, incluindo navegação. Quando passado o valor false o calendário ficará com a cor enfraquecida indicando que não há como interagir.
 
 **clearSelection()**<br>Limpa toda seleção do calendário.
 
