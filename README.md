@@ -42,7 +42,7 @@ Implemente o protocolo **CalendarViewDelegate**:
 
 A seguir veja os métodos disponíveis em CalendarView:
 
-**dateInit(month: Int, year: Int)**<br>Por padrão, o calendário sempre é aberto no mês atual, mas você definir o ano e o mês que será iniciado.
+**dateInit(month: Int, year: Int)**<br>Por padrão, o calendário sempre é aberto no mês atual, mas você pode definir o ano e o mês que será iniciado.
 
 **dayPlus(Int)**<br>Defini que a seleção só é possível apartir da data atual mais o número de dias indicado. O calendário inicia automaticamente no mês da data possível de seleção, sendo assim, se o mês atual é Abril e no dayPlus é indicado o valor 30, o calendário iniciará em Maio.
 
