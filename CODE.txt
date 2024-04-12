@@ -815,7 +815,10 @@ final class CalendarView: UIView {
     }
     
     func dayPlus(_ dplus: Int) {
-        dayPlus = dplus - 1
+        dayPlus = dplus <= 0 ? -1 : dplus - 1
+        if let date = Calendar.current.date(byAdding: .day, value: dayPlus, to: calendarMonth) {
+            calendarMonth = date
+        }
     }
     
     func numberOfContinuousDays(_ value: Int) {
